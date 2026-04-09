@@ -125,10 +125,10 @@ export default function Profile() {
   };
 
   const displayUser = user || {
-    name: 'Raj Rajendar',
-    email: 'rajrajendar331@gmail.com',
-    phone: '+91 90304 14241',
-    address: '45, Green Valley, Bangalore, KA',
+    name: 'Narender Kandhada',
+    email: 'narenderkandhada.online@gmail.com',
+    phone: '+91 81859 98010',
+    address: 'Thallaguda vil, Ranga Reddy, Hyderabad, Telangana, India - 509325',
     avatar: logoImg,
     member_since: 'October 2024',
   };

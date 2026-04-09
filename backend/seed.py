@@ -166,11 +166,11 @@ db.flush()
 # ─────────────────────── Demo User & Orders ───────────────────────
 print("👤 Seeding demo user...")
 demo_user = User(
-    name="Raj Rajendar",
-    email="rajrajendar331@gmail.com",
+    name="Narender Kandhada",
+    email="narenderkandhada.online@gmail.com",
     password_hash=hash_password("password123"),
-    phone="+91 98765 43210",
-    address="45, Green Valley, Bangalore, KA",
+    phone="+91 81859 98010",
+    address="Thallaguda Village,Ranga Reddy, Hyderabad, Telangana",
     avatar=f"{IMG}/logo.png",
     member_since="October 2024",
 )
@@ -218,5 +218,5 @@ print("✅ Database seeded successfully!")
 print("   - 4 categories")
 print("   - 20 products (with real images from /static/images/)")
 print("   - 4 blog posts (1 featured)")
-print("   - 1 demo user (rajrajendar331@gmail.com / password123)")
+print("   - 1 demo user (narenderkandhada.online@gmail.com / password123)")
 print("   - 2 sample orders")

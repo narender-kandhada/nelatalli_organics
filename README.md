@@ -95,7 +95,7 @@ The app will be available at `http://localhost:3000`
 
 | Email | Password |
 |-------|----------|
-| `rajrajendar331@gmail.com` | `password123` |
+| `narenderkandhada.online@gmail.com` | `password123` |
 
 ## 🔌 API Endpoints
 

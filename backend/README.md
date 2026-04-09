@@ -58,7 +58,7 @@ Uses **SQLite** by default (`nelatalli.db`). Tables are auto-created on startup.
 
 Run `python seed.py` to populate:
 - 4 categories, 20 products, 4 blog posts
-- Demo user: `rajrajendar331@gmail.com` / `password123`
+- Demo user: `narenderkandhada.online@gmail.com` / `password123`
 - 2 sample orders
 
 ## Project Structure

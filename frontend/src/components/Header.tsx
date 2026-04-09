@@ -74,7 +74,7 @@ export default function Header() {
       <div className="bg-surface-container-low py-2 px-4 md:px-8 flex justify-between items-center text-[10px] md:text-xs font-label tracking-widest uppercase text-primary/70 border-b border-outline-variant/10">
         <div className="flex items-center gap-4 md:gap-6">
           <span className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-sm">call</span> +91 90304-14241
+            <span className="material-symbols-outlined text-sm">call</span> +91 81859 98010
           </span>
           <a href="https://maps.app.goo.gl/qjF96cQPEs1CoTio8?g_st=aw" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hidden sm:flex hover:text-primary transition-colors cursor-pointer">
             <span className="material-symbols-outlined text-sm">location_on</span> Tallaguda,Telangana
