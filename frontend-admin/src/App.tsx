@@ -16,12 +16,24 @@ import { SettingsScreen } from './components/SettingsScreen';
 import { SupportScreen } from './components/SupportScreen';
 import { Chatbot } from './components/Chatbot';
 import { Screen } from './types';
+import { isAuthenticated, logout, clearToken } from './lib/api';
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState<Screen>('login');
+  const [currentScreen, setCurrentScreen] = useState<Screen>(
+    isAuthenticated() ? 'dashboard' : 'login'
+  );
+
+  const handleLogin = () => {
+    setCurrentScreen('dashboard');
+  };
+
+  const handleLogout = () => {
+    logout();
+    setCurrentScreen('login');
+  };
 
   if (currentScreen === 'login') {
-    return <LoginScreen onLogin={() => setCurrentScreen('dashboard')} />;
+    return <LoginScreen onLogin={handleLogin} />;
   }
 
   const renderScreen = () => {
@@ -37,7 +49,7 @@ export default function App() {
       case 'analytics':
         return <AnalyticsScreen />;
       case 'settings':
-        return <SettingsScreen />;
+        return <SettingsScreen onLogout={handleLogout} />;
       case 'support':
         return <SupportScreen />;
       default:
@@ -54,7 +66,7 @@ export default function App() {
 
   return (
     <div className="flex min-h-screen bg-background">
-      <Sidebar currentScreen={currentScreen} onNavigate={setCurrentScreen} />
+      <Sidebar currentScreen={currentScreen} onNavigate={setCurrentScreen} onLogout={handleLogout} />
       <main className="flex-1 flex flex-col min-w-0">
         <TopBar currentScreen={currentScreen} />
         <div className="flex-1 overflow-y-auto">

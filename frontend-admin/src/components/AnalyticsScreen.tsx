@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -9,7 +9,8 @@ import {
   Users,
   Package,
   Calendar,
-  Download
+  Download,
+  Loader2
 } from 'lucide-react';
 import { 
   AreaChart, 
@@ -26,25 +27,56 @@ import {
   Legend
 } from 'recharts';
 import { cn } from '@/src/lib/utils';
-
-const salesData = [
-  { name: 'Mon', sales: 4000, orders: 240 },
-  { name: 'Tue', sales: 3000, orders: 198 },
-  { name: 'Wed', sales: 2000, orders: 150 },
-  { name: 'Thu', sales: 2780, orders: 210 },
-  { name: 'Fri', sales: 1890, orders: 120 },
-  { name: 'Sat', sales: 2390, orders: 180 },
-  { name: 'Sun', sales: 3490, orders: 250 },
-];
-
-const categoryData = [
-  { name: 'Essential Oils', value: 45 },
-  { name: 'Skincare', value: 25 },
-  { name: 'Teas', value: 20 },
-  { name: 'Aromatherapy', value: 10 },
-];
+import {
+  analyticsApi,
+  AnalyticsOverview,
+  SalesDataPoint,
+  CategorySalesPoint,
+} from '@/src/lib/api';
 
 export function AnalyticsScreen() {
+  const [overview, setOverview] = useState<AnalyticsOverview | null>(null);
+  const [salesData, setSalesData] = useState<SalesDataPoint[]>([]);
+  const [categoryData, setCategoryData] = useState<CategorySalesPoint[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadAnalytics();
+  }, []);
+
+  const loadAnalytics = async () => {
+    setLoading(true);
+    try {
+      const [ov, sd, cd] = await Promise.all([
+        analyticsApi.getOverview(),
+        analyticsApi.getSales(),
+        analyticsApi.getCategories(),
+      ]);
+      setOverview(ov);
+      setSalesData(sd);
+      setCategoryData(cd);
+    } catch (err) {
+      console.error('Failed to load analytics:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading || !overview) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Loader2 size={32} className="animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  const statCards = [
+    { label: 'Revenue', value: overview.revenue, trend: overview.revenue_trend, isUp: overview.revenue_is_up, icon: DollarSign },
+    { label: 'Orders', value: overview.orders, trend: overview.orders_trend, isUp: overview.orders_is_up, icon: ShoppingCart },
+    { label: 'Customers', value: overview.customers, trend: overview.customers_trend, isUp: overview.customers_is_up, icon: Users },
+    { label: 'Avg. Order', value: overview.avg_order, trend: overview.avg_order_trend, isUp: overview.avg_order_is_up, icon: TrendingUp },
+  ];
+
   return (
     <div className="p-8 space-y-8 max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row md:items-center justify-end gap-4">
@@ -62,12 +94,7 @@ export function AnalyticsScreen() {
 
       {/* Overview Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[
-          { label: 'Revenue', value: '₹4,25,000', trend: '+12.5%', isUp: true, icon: DollarSign },
-          { label: 'Orders', value: '1,240', trend: '+8.2%', isUp: true, icon: ShoppingCart },
-          { label: 'Customers', value: '842', trend: '-2.4%', isUp: false, icon: Users },
-          { label: 'Avg. Order', value: '₹342', trend: '+4.1%', isUp: true, icon: TrendingUp },
-        ].map((stat, i) => (
+        {statCards.map((stat, i) => (
           <div key={i} className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/15 shadow-sm">
             <div className="flex justify-between items-start mb-4">
               <div className="p-2 bg-surface-container-low rounded-lg text-secondary">

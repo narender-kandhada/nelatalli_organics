@@ -257,3 +257,240 @@ class CartItemOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# ══════════════════════════════════════════════════════════════════
+#                     ADMIN SCHEMAS
+# ══════════════════════════════════════════════════════════════════
+
+# ──────────────────────────── Admin Auth ──────────────────────────
+
+class AdminLoginRequest(BaseModel):
+    email: str
+    password: str
+
+
+class AdminTokenOut(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: UserOut
+    is_admin: bool = True
+
+
+# ──────────────────────────── Admin Product ───────────────────────
+
+class AdminProductOut(BaseModel):
+    id: int
+    name: str
+    sku: str
+    category: str
+    price: float
+    discount_price: Optional[float] = None
+    stock: int
+    status: str  # Active, Low Stock, Out of Stock
+    image: str
+    slug: str
+    description: str
+
+    class Config:
+        from_attributes = True
+
+
+class AdminProductCreate(BaseModel):
+    title: str
+    sku: str
+    slug: str = ""
+    price: float
+    discount_price: Optional[float] = None
+    category_id: int
+    image: str = ""
+    stock: int = 0
+    description: str = ""
+    in_stock: bool = True
+
+
+class AdminProductUpdate(BaseModel):
+    title: Optional[str] = None
+    sku: Optional[str] = None
+    price: Optional[float] = None
+    discount_price: Optional[float] = None
+    category_id: Optional[int] = None
+    image: Optional[str] = None
+    stock: Optional[int] = None
+    description: Optional[str] = None
+    in_stock: Optional[bool] = None
+
+
+# ──────────────────────────── Admin Order ─────────────────────────
+
+class AdminOrderOut(BaseModel):
+    id: str
+    customer_name: str
+    customer_email: str
+    items: str
+    total: float
+    status: str
+    payment_status: str
+    date: str
+    initials: str
+
+    class Config:
+        from_attributes = True
+
+
+class AdminOrderUpdate(BaseModel):
+    status: Optional[str] = None
+    payment_status: Optional[str] = None
+
+
+# ──────────────────────────── Admin Customer ──────────────────────
+
+class AdminCustomerOut(BaseModel):
+    id: str
+    name: str
+    email: str
+    phone: str
+    location: str
+    joined: str
+    orders: int
+    total_spent: str
+    initials: str
+
+    class Config:
+        from_attributes = True
+
+
+# ──────────────────────────── Dashboard Stats ─────────────────────
+
+class DashboardStatsOut(BaseModel):
+    total_revenue: float
+    total_orders: int
+    total_products: int
+    total_users: int
+    low_stock_count: int
+    pending_orders: int
+    revenue_trend: str
+    orders_trend: str
+    users_trend: str
+
+
+class RevenueDataPoint(BaseModel):
+    name: str
+    value: float
+
+
+class OrderStatusBreakdown(BaseModel):
+    name: str
+    value: int
+    color: str
+
+
+class TopProductOut(BaseModel):
+    name: str
+    sold: int
+    percentage: int
+
+
+class LowStockAlert(BaseModel):
+    name: str
+    category: str
+    stock: int
+
+
+class RecentOrderOut(BaseModel):
+    id: str
+    customer: str
+    initials: str
+    total: str
+    status: str
+    date: str
+
+
+# ──────────────────────────── Analytics ───────────────────────────
+
+class AnalyticsOverview(BaseModel):
+    revenue: str
+    revenue_trend: str
+    revenue_is_up: bool
+    orders: str
+    orders_trend: str
+    orders_is_up: bool
+    customers: str
+    customers_trend: str
+    customers_is_up: bool
+    avg_order: str
+    avg_order_trend: str
+    avg_order_is_up: bool
+
+
+class SalesDataPoint(BaseModel):
+    name: str
+    sales: float
+    orders: int
+
+
+class CategorySalesPoint(BaseModel):
+    name: str
+    value: int
+
+
+# ──────────────────────────── Admin Settings ──────────────────────
+
+class AdminProfileUpdate(BaseModel):
+    name: Optional[str] = None
+    display_name: Optional[str] = None
+    email: Optional[str] = None
+    bio: Optional[str] = None
+    avatar: Optional[str] = None
+
+
+class PasswordChangeRequest(BaseModel):
+    current_password: str
+    new_password: str
+
+
+class NotificationPreferences(BaseModel):
+    email_notifications: bool = True
+    desktop_alerts: bool = False
+    newsletter: bool = True
+    inventory_alerts: bool = True
+
+
+class GeneralPreferences(BaseModel):
+    language: str = "English (US)"
+    timezone: str = "(GMT+05:30) Mumbai, Kolkata"
+    currency: str = "INR (₹)"
+    date_format: str = "DD/MM/YYYY"
+
+
+# ──────────────────────────── Support ─────────────────────────────
+
+class SupportTicketCreate(BaseModel):
+    name: str
+    email: str
+    subject: str
+    message: str
+    priority: str = "Medium"
+
+
+class SupportTicketOut(BaseModel):
+    id: int
+    name: str
+    email: str
+    subject: str
+    message: str
+    status: str
+    priority: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+# ──────────────────────────── Order Stats ─────────────────────────
+
+class OrderStatsOut(BaseModel):
+    fulfillment_rate: float
+    fulfillment_trend: str
+    pending_revenue: float
+    pending_invoices: int

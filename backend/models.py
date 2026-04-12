@@ -25,11 +25,14 @@ class Product(Base):
     id = Column(Integer, primary_key=True, index=True)
     slug = Column(String(200), unique=True, index=True, nullable=False)
     title = Column(String(300), nullable=False)
+    sku = Column(String(100), unique=True, index=True, default="")
     price = Column(Float, nullable=False)
+    discount_price = Column(Float, nullable=True)
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=False)
     image = Column(String(500), default="")
     rating = Column(Float, default=0.0)
     reviews = Column(Integer, default=0)
+    stock = Column(Integer, default=0)
     description = Column(Text, default="")
     is_top_rated = Column(Boolean, default=False)
     is_featured = Column(Boolean, default=False)
@@ -80,6 +83,7 @@ class User(Base):
     phone = Column(String(50), default="")
     address = Column(String(500), default="")
     avatar = Column(String(500), default="")
+    is_admin = Column(Boolean, default=False)
     member_since = Column(String(100), default="")
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
@@ -129,7 +133,8 @@ class Order(Base):
     order_number = Column(String(50), unique=True, index=True, nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     total = Column(Float, nullable=False)
-    status = Column(String(50), default="Processing")
+    status = Column(String(50), default="Pending")
+    payment_status = Column(String(50), default="Unpaid")
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     user = relationship("User", back_populates="orders")
@@ -171,3 +176,17 @@ class CartItem(Base):
 
     user = relationship("User", back_populates="cart_items")
     product = relationship("Product", back_populates="cart_items")
+
+
+class SupportTicket(Base):
+    __tablename__ = "support_tickets"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    name = Column(String(200), nullable=False)
+    email = Column(String(300), nullable=False)
+    subject = Column(String(500), nullable=False)
+    message = Column(Text, nullable=False)
+    status = Column(String(50), default="Open")  # Open, In Progress, Resolved
+    priority = Column(String(50), default="Medium")  # Low, Medium, High
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))

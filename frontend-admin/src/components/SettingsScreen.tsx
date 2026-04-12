@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   User, 
   Bell, 
@@ -16,17 +16,124 @@ import {
   LogOut,
   Trash2,
   Download,
-  CheckCircle2
+  CheckCircle2,
+  Loader2
 } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
+import { settingsApi, AdminProfile } from '@/src/lib/api';
 
 type SettingsTab = 'profile' | 'notifications' | 'security' | 'general' | 'appearance' | 'data';
 
-export function SettingsScreen() {
+interface SettingsScreenProps {
+  onLogout: () => void;
+}
+
+export function SettingsScreen({ onLogout }: SettingsScreenProps) {
   const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
   const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('light');
   const [accentColor, setAccentColor] = useState('#271310');
   const [isCompact, setIsCompact] = useState(false);
+  const [profile, setProfile] = useState<AdminProfile | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
+
+  // Profile form
+  const [profileForm, setProfileForm] = useState({
+    name: '', display_name: '', email: '', bio: '',
+  });
+
+  // Password form
+  const [passwordForm, setPasswordForm] = useState({
+    current_password: '', new_password: '',
+  });
+
+  // Notifications form
+  const [notifications, setNotifications] = useState({
+    email_notifications: true, desktop_alerts: false, newsletter: true, inventory_alerts: true,
+  });
+
+  useEffect(() => {
+    loadProfile();
+    loadNotifications();
+  }, []);
+
+  const loadProfile = async () => {
+    try {
+      const p = await settingsApi.getProfile();
+      setProfile(p);
+      setProfileForm({
+        name: p.name, display_name: p.display_name, email: p.email, bio: p.bio,
+      });
+    } catch (err) {
+      console.error('Failed to load profile:', err);
+    }
+  };
+
+  const loadNotifications = async () => {
+    try {
+      const n = await settingsApi.getNotifications();
+      setNotifications(n as any);
+    } catch (err) {
+      console.error('Failed to load notifications:', err);
+    }
+  };
+
+  const showSaveSuccess = (msg: string) => {
+    setSaveMessage(msg);
+    setTimeout(() => setSaveMessage(''), 3000);
+  };
+
+  const handleSaveProfile = async () => {
+    setSaving(true);
+    try {
+      await settingsApi.updateProfile(profileForm);
+      showSaveSuccess('Profile updated successfully!');
+      loadProfile();
+    } catch (err: any) {
+      alert(err.message || 'Failed to save profile');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleChangePassword = async () => {
+    if (!passwordForm.current_password || !passwordForm.new_password) {
+      alert('Please fill in both fields');
+      return;
+    }
+    setSaving(true);
+    try {
+      await settingsApi.changePassword(passwordForm);
+      showSaveSuccess('Password updated successfully!');
+      setPasswordForm({ current_password: '', new_password: '' });
+    } catch (err: any) {
+      alert(err.message || 'Failed to change password');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSaveNotifications = async () => {
+    setSaving(true);
+    try {
+      await settingsApi.updateNotifications(notifications as any);
+      showSaveSuccess('Notification preferences updated!');
+    } catch (err: any) {
+      alert(err.message || 'Failed to save preferences');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSaveGeneral = async () => {
+    setSaving(true);
+    try {
+      // For now just show success
+      showSaveSuccess('General preferences saved!');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const tabs = [
     { id: 'profile', label: 'Profile', icon: User },
@@ -47,7 +154,7 @@ export function SettingsScreen() {
             <div className="flex items-center gap-6">
               <div className="w-20 h-20 rounded-full bg-surface-container-high overflow-hidden border-4 border-white shadow-sm">
                 <img 
-                  src="https://picsum.photos/seed/admin/200/200" 
+                  src={profile?.avatar || "https://picsum.photos/seed/admin/200/200"} 
                   alt="Avatar" 
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
@@ -63,14 +170,16 @@ export function SettingsScreen() {
                 <label className="text-xs font-bold text-secondary uppercase tracking-widest">Full Name</label>
                 <input 
                   className="w-full bg-surface-container-low border-none ring-1 ring-outline-variant/15 rounded-lg py-2.5 px-4 text-sm focus:ring-secondary transition-all" 
-                  defaultValue="Narender Kandhada"
+                  value={profileForm.name}
+                  onChange={e => setProfileForm(f => ({ ...f, name: e.target.value }))}
                 />
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-bold text-secondary uppercase tracking-widest">Display Name</label>
                 <input 
                   className="w-full bg-surface-container-low border-none ring-1 ring-outline-variant/15 rounded-lg py-2.5 px-4 text-sm focus:ring-secondary transition-all" 
-                  defaultValue="Narender"
+                  value={profileForm.display_name}
+                  onChange={e => setProfileForm(f => ({ ...f, display_name: e.target.value }))}
                 />
               </div>
               <div className="space-y-2 md:col-span-2">
@@ -79,22 +188,28 @@ export function SettingsScreen() {
                   <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" />
                   <input 
                     className="w-full bg-surface-container-low border-none ring-1 ring-outline-variant/15 rounded-lg py-2.5 pl-10 pr-4 text-sm focus:ring-secondary transition-all" 
-                    defaultValue="n.kandhada@nelatalli.com"
+                    value={profileForm.email}
+                    onChange={e => setProfileForm(f => ({ ...f, email: e.target.value }))}
                   />
                 </div>
               </div>
               <div className="space-y-2 md:col-span-2">
                 <label className="text-xs font-bold text-secondary uppercase tracking-widest">Bio</label>
                 <textarea 
-                  className="w-full bg-surface-container-low border-none ring-1 ring-outline-variant/15 rounded-lg py-2.5 px-4 text-sm focus:ring-secondary transition-all h-24 resize-none" 
-                  defaultValue="Senior Editorial Curator at Nelatalli Organics. Passionate about sustainable agriculture and botanical heritage."
+                  className="w-full bg-surface-container-low border-none ring-1 ring-outline-variant/15 rounded-lg py-2.5 px-4 text-sm focus:ring-secondary transition-all h-24 resize-none"
+                  value={profileForm.bio}
+                  onChange={e => setProfileForm(f => ({ ...f, bio: e.target.value }))}
                 />
               </div>
             </div>
 
             <div className="pt-4 flex justify-end">
-              <button className="bg-primary text-white px-8 py-3 rounded-full font-bold text-sm flex items-center gap-2 shadow-md hover:opacity-90 active:scale-95 transition-all">
-                <Save size={18} />
+              <button 
+                onClick={handleSaveProfile}
+                disabled={saving}
+                className="bg-primary text-white px-8 py-3 rounded-full font-bold text-sm flex items-center gap-2 shadow-md hover:opacity-90 active:scale-95 transition-all disabled:opacity-50"
+              >
+                {saving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
                 Save Changes
               </button>
             </div>
@@ -108,25 +223,26 @@ export function SettingsScreen() {
             
             <div className="space-y-6">
               {[
-                { title: 'Email Notifications', desc: 'Receive daily summaries and order alerts via email.', enabled: true },
-                { title: 'Desktop Alerts', desc: 'Get real-time browser notifications for new orders.', enabled: false },
-                { title: 'Newsletter', desc: 'Stay updated with our seasonal botanical reports.', enabled: true },
-                { title: 'Inventory Alerts', desc: 'Notify when products reach low stock thresholds.', enabled: true },
-              ].map((item, i) => (
-                <div key={i} className="flex items-center justify-between">
+                { key: 'email_notifications', title: 'Email Notifications', desc: 'Receive daily summaries and order alerts via email.' },
+                { key: 'desktop_alerts', title: 'Desktop Alerts', desc: 'Get real-time browser notifications for new orders.' },
+                { key: 'newsletter', title: 'Newsletter', desc: 'Stay updated with our seasonal botanical reports.' },
+                { key: 'inventory_alerts', title: 'Inventory Alerts', desc: 'Notify when products reach low stock thresholds.' },
+              ].map((item) => (
+                <div key={item.key} className="flex items-center justify-between">
                   <div className="max-w-md">
                     <p className="text-sm font-bold text-primary">{item.title}</p>
                     <p className="text-xs text-on-surface-variant font-medium">{item.desc}</p>
                   </div>
                   <button 
+                    onClick={() => setNotifications(n => ({ ...n, [item.key]: !(n as any)[item.key] }))}
                     className={cn(
                       "w-12 h-6 rounded-full transition-all relative",
-                      item.enabled ? "bg-primary" : "bg-surface-container-high"
+                      (notifications as any)[item.key] ? "bg-primary" : "bg-surface-container-high"
                     )}
                   >
                     <div className={cn(
                       "absolute top-1 w-4 h-4 rounded-full bg-white transition-all",
-                      item.enabled ? "right-1" : "left-1"
+                      (notifications as any)[item.key] ? "right-1" : "left-1"
                     )} />
                   </button>
                 </div>
@@ -134,8 +250,12 @@ export function SettingsScreen() {
             </div>
 
             <div className="pt-6 border-t border-outline-variant/10 flex justify-end">
-              <button className="bg-primary text-white px-8 py-3 rounded-full font-bold text-sm flex items-center gap-2 shadow-md hover:opacity-90 transition-all">
-                <Save size={18} />
+              <button 
+                onClick={handleSaveNotifications}
+                disabled={saving}
+                className="bg-primary text-white px-8 py-3 rounded-full font-bold text-sm flex items-center gap-2 shadow-md hover:opacity-90 transition-all disabled:opacity-50"
+              >
+                {saving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
                 Update Preferences
               </button>
             </div>
@@ -152,17 +272,36 @@ export function SettingsScreen() {
                   <label className="text-xs font-bold text-secondary uppercase tracking-widest">Current Password</label>
                   <div className="relative">
                     <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" />
-                    <input type="password" title="Current Password" placeholder="••••••••" className="w-full bg-surface-container-low border-none ring-1 ring-outline-variant/15 rounded-lg py-2.5 pl-10 pr-4 text-sm focus:ring-secondary" />
+                    <input 
+                      type="password" 
+                      title="Current Password" 
+                      placeholder="••••••••" 
+                      value={passwordForm.current_password}
+                      onChange={e => setPasswordForm(f => ({ ...f, current_password: e.target.value }))}
+                      className="w-full bg-surface-container-low border-none ring-1 ring-outline-variant/15 rounded-lg py-2.5 pl-10 pr-4 text-sm focus:ring-secondary" 
+                    />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-secondary uppercase tracking-widest">New Password</label>
                   <div className="relative">
                     <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" />
-                    <input type="password" title="New Password" placeholder="••••••••" className="w-full bg-surface-container-low border-none ring-1 ring-outline-variant/15 rounded-lg py-2.5 pl-10 pr-4 text-sm focus:ring-secondary" />
+                    <input 
+                      type="password" 
+                      title="New Password" 
+                      placeholder="••••••••" 
+                      value={passwordForm.new_password}
+                      onChange={e => setPasswordForm(f => ({ ...f, new_password: e.target.value }))}
+                      className="w-full bg-surface-container-low border-none ring-1 ring-outline-variant/15 rounded-lg py-2.5 pl-10 pr-4 text-sm focus:ring-secondary" 
+                    />
                   </div>
                 </div>
-                <button className="bg-surface-container text-primary px-6 py-2.5 rounded-full text-xs font-bold border border-outline-variant/10 hover:bg-surface-container-high transition-all">
+                <button 
+                  onClick={handleChangePassword}
+                  disabled={saving}
+                  className="bg-surface-container text-primary px-6 py-2.5 rounded-full text-xs font-bold border border-outline-variant/10 hover:bg-surface-container-high transition-all disabled:opacity-50 flex items-center gap-2"
+                >
+                  {saving && <Loader2 size={14} className="animate-spin" />}
                   Update Password
                 </button>
               </div>
@@ -233,8 +372,12 @@ export function SettingsScreen() {
             </div>
 
             <div className="pt-6 border-t border-outline-variant/10 flex justify-end">
-              <button className="bg-primary text-white px-8 py-3 rounded-full font-bold text-sm flex items-center gap-2 shadow-md hover:opacity-90 transition-all">
-                <Save size={18} />
+              <button 
+                onClick={handleSaveGeneral}
+                disabled={saving}
+                className="bg-primary text-white px-8 py-3 rounded-full font-bold text-sm flex items-center gap-2 shadow-md hover:opacity-90 transition-all disabled:opacity-50"
+              >
+                {saving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
                 Save Preferences
               </button>
             </div>
@@ -321,10 +464,7 @@ export function SettingsScreen() {
 
             <div className="pt-6 border-t border-outline-variant/10 flex justify-end">
               <button 
-                onClick={() => {
-                  // In a real app, this would update a global context or CSS variables
-                  alert(`Appearance saved!\nTheme: ${theme}\nAccent: ${accentColor}\nCompact: ${isCompact}`);
-                }}
+                onClick={() => showSaveSuccess('Appearance settings applied!')}
                 className="bg-primary text-white px-8 py-3 rounded-full font-bold text-sm flex items-center gap-2 shadow-md hover:opacity-90 transition-all"
               >
                 <Save size={18} />
@@ -387,6 +527,14 @@ export function SettingsScreen() {
 
   return (
     <div className="p-8 space-y-8 max-w-4xl mx-auto">
+      {/* Save success message */}
+      {saveMessage && (
+        <div className="fixed top-4 right-4 z-50 bg-green-50 border border-green-200 text-green-800 px-6 py-3 rounded-xl shadow-lg flex items-center gap-2 animate-in slide-in-from-top">
+          <CheckCircle2 size={18} />
+          <span className="text-sm font-bold">{saveMessage}</span>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Sidebar Tabs */}
         <nav className="space-y-1">
@@ -408,7 +556,10 @@ export function SettingsScreen() {
           ))}
           
           <div className="pt-8 mt-8 border-t border-outline-variant/10">
-            <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold text-error hover:bg-error-container/10 transition-all">
+            <button 
+              onClick={onLogout}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold text-error hover:bg-error-container/10 transition-all"
+            >
               <LogOut size={18} />
               Log Out
             </button>

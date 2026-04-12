@@ -1,12 +1,34 @@
-import React from 'react';
-import { Leaf, Mail, Lock } from 'lucide-react';
+import React, { useState } from 'react';
+import { Leaf, Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
 import { Screen } from '@/src/types';
+import { login } from '@/src/lib/api';
+import logo from '../assets/logo.png';
 
 interface LoginScreenProps {
   onLogin: () => void;
 }
 
 export function LoginScreen({ onLogin }: LoginScreenProps) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      await login({ email, password });
+      onLogin();
+    } catch (err: any) {
+      setError(err.message || 'Login failed. Please check your credentials.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="bg-background text-on-surface min-h-screen flex items-center justify-center p-6">
       <div className="w-full max-w-md">
@@ -15,10 +37,9 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
           <div className="flex justify-center mb-6">
             <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl ring-1 ring-primary/10">
               <img 
-                src="https://images.unsplash.com/photo-1589923188900-85dae523342b?q=80&w=400&h=400&auto=format&fit=crop" 
+                src={logo}
                 alt="Nelatalli Organics Logo" 
                 className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
               />
             </div>
           </div>
@@ -35,13 +56,14 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
             <p className="text-on-surface-variant mt-2">Please enter your credentials to access the editorial dashboard.</p>
           </header>
 
-          <form 
-            onSubmit={(e) => {
-              e.preventDefault();
-              onLogin();
-            }} 
-            className="space-y-6"
-          >
+          {error && (
+            <div className="mb-6 p-4 bg-error-container/20 border border-error/20 rounded-lg flex items-center gap-3 text-error">
+              <AlertCircle size={18} />
+              <span className="text-sm font-bold">{error}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-bold text-on-surface-variant mb-2" htmlFor="email">Email Address</label>
               <div className="relative group">
@@ -49,8 +71,11 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                   className="w-full px-4 py-3 bg-surface-container-low rounded-lg border-2 border-outline-variant/15 text-on-surface focus:outline-none focus:border-secondary focus:ring-0 transition-all placeholder:text-outline-variant" 
                   id="email" 
                   type="email" 
-                  placeholder="admin@nelatalli.com" 
+                  placeholder="admin@nelatalli.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required 
+                  disabled={loading}
                 />
                 <div className="absolute inset-y-0 right-3 flex items-center text-outline-variant group-focus-within:text-secondary">
                   <Mail size={20} />
@@ -65,8 +90,11 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                   className="w-full px-4 py-3 bg-surface-container-low rounded-lg border-2 border-outline-variant/15 text-on-surface focus:outline-none focus:border-secondary focus:ring-0 transition-all placeholder:text-outline-variant" 
                   id="password" 
                   type="password" 
-                  placeholder="••••••••" 
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required 
+                  disabled={loading}
                 />
                 <div className="absolute inset-y-0 right-3 flex items-center text-outline-variant group-focus-within:text-secondary">
                   <Lock size={20} />
@@ -91,10 +119,18 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
             </div>
 
             <button 
-              className="w-full py-4 px-6 bg-gradient-to-br from-primary to-primary-container text-white rounded-full font-bold text-lg hover:opacity-90 active:scale-95 transition-all shadow-md" 
+              className="w-full py-4 px-6 bg-gradient-to-br from-primary to-primary-container text-white rounded-full font-bold text-lg hover:opacity-90 active:scale-95 transition-all shadow-md disabled:opacity-60 flex items-center justify-center gap-2" 
               type="submit"
+              disabled={loading}
             >
-              Login
+              {loading ? (
+                <>
+                  <Loader2 size={20} className="animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                'Login'
+              )}
             </button>
           </form>
 

@@ -12,13 +12,15 @@ import {
 } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 import { Screen } from '@/src/types';
+import logo from '../assets/logo.png';
 
 interface SidebarProps {
   currentScreen: Screen;
   onNavigate: (screen: Screen) => void;
+  onLogout: () => void;
 }
 
-export function Sidebar({ currentScreen, onNavigate }: SidebarProps) {
+export function Sidebar({ currentScreen, onNavigate, onLogout }: SidebarProps) {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'inventory', label: 'Inventory', icon: Leaf },
@@ -34,10 +36,9 @@ export function Sidebar({ currentScreen, onNavigate }: SidebarProps) {
       <div className="px-6 mb-8 flex items-center gap-3">
         <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/20 shadow-lg">
           <img 
-            src="https://images.unsplash.com/photo-1589923188900-85dae523342b?q=80&w=200&h=200&auto=format&fit=crop" 
+            src={logo}
             alt="Nelatalli Logo" 
             className="w-full h-full object-cover"
-            referrerPolicy="no-referrer"
           />
         </div>
         <div className="flex flex-col">
@@ -67,7 +68,7 @@ export function Sidebar({ currentScreen, onNavigate }: SidebarProps) {
 
       <footer className="mt-auto pt-6 border-t border-white/10">
         <button 
-          onClick={() => onNavigate('login')}
+          onClick={onLogout}
           className="w-full text-stone-400 hover:text-white px-6 py-3 transition-colors flex items-center gap-3"
         >
           <LogOut size={20} />

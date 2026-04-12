@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   TrendingUp, 
   AlertTriangle, 
@@ -6,7 +6,8 @@ import {
   Package, 
   Truck, 
   Clock, 
-  ChevronRight 
+  ChevronRight,
+  Loader2
 } from 'lucide-react';
 import { 
   BarChart, 
@@ -21,57 +22,81 @@ import {
   Cell 
 } from 'recharts';
 import { cn } from '@/src/lib/utils';
-
-const revenueData = [
-  { name: 'Jan', value: 400 },
-  { name: 'Feb', value: 600 },
-  { name: 'Mar', value: 500 },
-  { name: 'Apr', value: 800 },
-  { name: 'May', value: 700 },
-  { name: 'Jun', value: 950 },
-  { name: 'Jul', value: 850 },
-  { name: 'Aug', value: 1000 },
-];
-
-const statusData = [
-  { name: 'Delivered', value: 72, color: '#271310' },
-  { name: 'Processing', value: 18, color: '#725a39' },
-  { name: 'Cancelled', value: 10, color: '#d3c3c0' },
-];
-
-const recentOrders = [
-  { id: '#98321', customer: 'Ananya Sharma', initials: 'AS', total: '₹4,250', status: 'Delivered', date: '24 Oct, 2023' },
-  { id: '#98320', customer: 'Rohan Kapoor', initials: 'RK', total: '₹1,120', status: 'Processing', date: '24 Oct, 2023' },
-  { id: '#98319', customer: 'Meera Das', initials: 'MD', total: '₹8,400', status: 'Pending', date: '23 Oct, 2023' },
-  { id: '#98318', customer: 'Vikram Jha', initials: 'VJ', total: '₹550', status: 'Delivered', date: '23 Oct, 2023' },
-];
-
-const lowStockAlerts = [
-  { name: 'Organic Neem Honey', category: 'Pantry', stock: 3 },
-  { name: 'Hand-pressed Walnut Oil', category: 'Oils', stock: 2 },
-  { name: 'A2 Gir Cow Ghee', category: 'Dairy', stock: 5 },
-];
-
-const topProducts = [
-  { name: 'Wild Forest Honey', sold: 840, percentage: 95 },
-  { name: 'Turmeric Root Powder', sold: 720, percentage: 82 },
-  { name: 'Himalayan Rock Salt', sold: 650, percentage: 70 },
-  { name: 'Cold Pressed Coconut Oil', sold: 510, percentage: 58 },
-];
+import {
+  dashboardApi,
+  DashboardStats,
+  RevenueDataPoint,
+  OrderStatusBreakdown,
+  RecentOrder,
+  LowStockAlert,
+  TopProduct,
+} from '@/src/lib/api';
 
 export function DashboardScreen() {
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [revenueData, setRevenueData] = useState<RevenueDataPoint[]>([]);
+  const [statusData, setStatusData] = useState<OrderStatusBreakdown[]>([]);
+  const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([]);
+  const [lowStockAlerts, setLowStockAlerts] = useState<LowStockAlert[]>([]);
+  const [topProducts, setTopProducts] = useState<TopProduct[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadDashboard();
+  }, []);
+
+  const loadDashboard = async () => {
+    setLoading(true);
+    try {
+      const [s, r, os, ro, ls, tp] = await Promise.all([
+        dashboardApi.getStats(),
+        dashboardApi.getRevenue(),
+        dashboardApi.getOrderStatus(),
+        dashboardApi.getRecentOrders(),
+        dashboardApi.getLowStock(),
+        dashboardApi.getTopProducts(),
+      ]);
+      setStats(s);
+      setRevenueData(r);
+      setStatusData(os);
+      setRecentOrders(ro);
+      setLowStockAlerts(ls);
+      setTopProducts(tp);
+    } catch (err) {
+      console.error('Failed to load dashboard:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatValue = (val: number): string => {
+    if (val >= 1_000_000) return `₹${(val / 1_000_000).toFixed(1)}M`;
+    if (val >= 1_000) return `${(val / 1_000).toFixed(1)}k`;
+    return String(val);
+  };
+
+  if (loading || !stats) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Loader2 size={32} className="animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  const statCards = [
+    { label: 'Total Revenue', value: formatValue(stats.total_revenue), trend: stats.revenue_trend, color: 'bg-surface-container-lowest' },
+    { label: 'Total Orders', value: formatValue(stats.total_orders), trend: stats.orders_trend, color: 'bg-surface-container-lowest' },
+    { label: 'Total Products', value: String(stats.total_products), trend: null, color: 'bg-surface-container-lowest' },
+    { label: 'Total Users', value: formatValue(stats.total_users), trend: stats.users_trend, color: 'bg-surface-container-lowest' },
+    { label: 'Low Stock', value: String(stats.low_stock_count), trend: null, color: 'bg-error-container text-on-error-container' },
+    { label: 'Pending Orders', value: String(stats.pending_orders), trend: null, color: 'bg-tertiary-container text-white' },
+  ];
+
   return (
     <div className="p-8 space-y-10">
       {/* StatCards Row */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
-        {[
-          { label: 'Total Revenue', value: '₹1.2M', trend: '+12%', color: 'bg-surface-container-lowest' },
-          { label: 'Total Orders', value: '4.5k', trend: '+8%', color: 'bg-surface-container-lowest' },
-          { label: 'Total Products', value: '120', trend: null, color: 'bg-surface-container-lowest' },
-          { label: 'Total Users', value: '2.8k', trend: '+15%', color: 'bg-surface-container-lowest' },
-          { label: 'Low Stock', value: '15', trend: null, color: 'bg-error-container text-on-error-container' },
-          { label: 'Pending Orders', value: '42', trend: null, color: 'bg-tertiary-container text-white' },
-        ].map((stat, i) => (
+        {statCards.map((stat, i) => (
           <div key={i} className={cn("p-6 rounded-xl border border-outline-variant/15 flex flex-col gap-2 shadow-sm", stat.color)}>
             <span className={cn("text-xs uppercase font-bold tracking-wider", stat.trend ? "text-secondary" : "opacity-80")}>
               {stat.label}
@@ -86,7 +111,7 @@ export function DashboardScreen() {
 
       {/* Bento Charts Section */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Line Chart Area */}
+        {/* Bar Chart Area */}
         <div className="lg:col-span-8 bg-surface-container-low p-8 rounded-xl flex flex-col h-[400px]">
           <div className="flex justify-between items-center mb-8">
             <div>
@@ -135,7 +160,7 @@ export function DashboardScreen() {
                 </PieChart>
               </ResponsiveContainer>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-2xl font-serif font-bold">4.5k</span>
+                <span className="text-2xl font-serif font-bold">{formatValue(stats.total_orders)}</span>
                 <span className="text-[10px] uppercase tracking-tighter text-secondary font-bold">Total</span>
               </div>
             </div>
@@ -190,7 +215,8 @@ export function DashboardScreen() {
                       <span className={cn(
                         "px-3 py-1 rounded-full text-[10px] font-bold",
                         order.status === 'Delivered' ? "bg-green-100 text-green-700" : 
-                        order.status === 'Processing' ? "bg-secondary-container text-on-secondary-container" : 
+                        order.status === 'Shipped' ? "bg-blue-100 text-blue-700" :
+                        order.status === 'Confirmed' ? "bg-secondary-container text-on-secondary-container" : 
                         "bg-tertiary-container text-white"
                       )}>
                         {order.status}
@@ -199,6 +225,9 @@ export function DashboardScreen() {
                     <td className="py-5 text-right text-secondary font-bold">{order.date}</td>
                   </tr>
                 ))}
+                {recentOrders.length === 0 && (
+                  <tr><td colSpan={5} className="py-8 text-center text-on-surface-variant">No recent orders</td></tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -222,10 +251,15 @@ export function DashboardScreen() {
                   <span className="text-error font-bold text-sm">{alert.stock} left</span>
                 </div>
               ))}
+              {lowStockAlerts.length === 0 && (
+                <p className="text-sm text-on-surface-variant text-center py-4">No low stock items</p>
+              )}
             </div>
-            <button className="mt-6 w-full py-3 bg-error text-white rounded-full text-sm font-bold hover:bg-error/90 transition-all">
-              Reorder All
-            </button>
+            {lowStockAlerts.length > 0 && (
+              <button className="mt-6 w-full py-3 bg-error text-white rounded-full text-sm font-bold hover:bg-error/90 transition-all">
+                Reorder All
+              </button>
+            )}
           </div>
 
           {/* Top 5 Products */}
@@ -246,6 +280,9 @@ export function DashboardScreen() {
                   </div>
                 </div>
               ))}
+              {topProducts.length === 0 && (
+                <p className="text-sm text-on-surface-variant text-center py-4">No sales data yet</p>
+              )}
             </div>
           </div>
         </div>

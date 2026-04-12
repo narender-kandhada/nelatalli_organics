@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from database import engine, Base
-from routers import products, blog, contact, auth_router, users, orders, wishlist, cart, search
+from routers import products, blog, contact, auth_router, users, orders, wishlist, cart, search, admin
 
 # Create all tables
 Base.metadata.create_all(bind=engine)
@@ -36,6 +36,7 @@ app.include_router(orders.router)
 app.include_router(wishlist.router)
 app.include_router(cart.router)
 app.include_router(search.router)
+app.include_router(admin.router)
 
 
 @app.get("/")
