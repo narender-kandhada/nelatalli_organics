@@ -1,8 +1,78 @@
+# ═══════════════════════════════════════════════════════════════════
+#       Nelatalli Organics Admin Dashboard — Node.js .gitignore
+# ═══════════════════════════════════════════════════════════════════
+
+# ──────────────── Node.js & Package Management ────────────────
 node_modules/
+npm-debug.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+pnpm-lock.yaml
+package-lock.json
+package-lock.json.lock
+.npm
+.eslintcache
+.node_repl_history
+
+# ──────────────── Build Output ────────────────
 build/
 dist/
+.cache/
+.parcel-cache/
+.next/
+out/
+
+# ──────────────── Coverage Reports ────────────────
 coverage/
-.DS_Store
-*.log
-.env*
+.nyc_output/
+htmlcov/
+
+# ──────────────── Environment Variables ────────────────
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
 !.env.example
+!.env.sample
+
+# ──────────────── IDE & Editor Config ────────────────
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+.vim/
+.emacs.d/
+*.iml
+*.iws
+*.ipr
+.project
+.settings/
+
+# ──────────────── OS Files ────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+.AppleDouble
+.LSOverride
+.directory
+
+# ──────────────── Runtime & Logs ────────────────
+*.log
+logs/
+.pm2/
+
+# ──────────────── Misc ────────────────
+.cache/
+.eslint-cache/
+.stylelintcache
+*.swp
+.idea
+.vscode-settings.json

@@ -1,15 +1,46 @@
-# Core
+# ═══════════════════════════════════════════════════════════════════
+# Nelatalli Organics Backend — Python Dependencies
+# ═══════════════════════════════════════════════════════════════════
+
+# ───────────────── Core Web Framework ───────────────────
 fastapi>=0.115.0
 uvicorn[standard]>=0.30.0
 pydantic>=2.9.0
+pydantic-settings>=2.0.0
 
-# Database
+# ───────────────── Database & ORM ───────────────────
 sqlalchemy>=2.0.35
+alembic>=1.13.0  # Database migrations (optional)
 
-# Authentication
+# ───────────────── Authentication & Security ───────────────────
 python-jose[cryptography]>=3.3.0
 bcrypt>=4.0.0
+passlib>=1.7.4  # Password hashing utilities
+cryptography>=41.0.0  # Enhanced security for JWT
 
-# Utilities
-python-dotenv>=1.0.1
+# ───────────────── HTTP & File Handling ───────────────────
 python-multipart>=0.0.9
+httpx>=0.25.0  # For async HTTP requests
+aiofiles>=23.0.0  # Async file operations
+
+# ───────────────── Environment & Configuration ───────────────────
+python-dotenv>=1.0.1
+python-decouple>=3.8  # Environment variable parsing
+
+# ───────────────── CORS & Middleware ───────────────────
+# (Included with FastAPI, no separate package needed)
+
+# ───────────────── Optional: Email & Notifications ───────────────────
+# email-validator>=2.0.0  # Email validation (uncomment if needed)
+# python-jose[cryptography,jwklient]>=3.3.0  # For JWT with JWK support
+
+# ───────────────── Optional: Rate Limiting ───────────────────
+# slowapi>=0.1.8  # Rate limiting for API endpoints
+
+# ───────────────── Optional: Celery & Redis (for async tasks) ───────────────────
+# celery>=5.3.0  # Async task queue
+# redis>=5.0.0  # Redis client for caching
+
+# ───────────────── Optional: APScheduler (for scheduled jobs) ───────────────────
+# APScheduler>=3.10.0  # Scheduled background tasks
+

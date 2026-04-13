@@ -1,35 +1,83 @@
-# Dependencies
+# ═══════════════════════════════════════════════════════════════════
+#         Nelatalli Organics User Frontend — Node.js .gitignore
+# ═══════════════════════════════════════════════════════════════════
+
+# ──────────────── Node.js & Package Management ────────────────
 node_modules/
-
-# Build output
-build/
-dist/
-
-# Test coverage
-coverage/
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Logs
-*.log
+npm-debug.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+pnpm-lock.yaml
+package-lock.json
+package-lock.json.lock
+.npm
+.eslintcache
+.node_repl_history
 
-# Environment
+# ──────────────── Build Output ────────────────
+build/
+dist/
+.cache/
+.parcel-cache/
+.next/
+out/
+
+# ──────────────── Coverage Reports ────────────────
+coverage/
+.nyc_output/
+htmlcov/
+
+# ──────────────── Environment Variables ────────────────
 .env
 .env.local
 .env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
 !.env.example
+!.env.sample
 
-# IDE
+# ──────────────── IDE & Editor Config ────────────────
 .vscode/
 .idea/
+*.sublime-project
+*.sublime-workspace
 *.swp
 *.swo
+*~
+.vim/
+.emacs.d/
+*.iml
+*.iws
+*.ipr
+.project
+.settings/
 
-# Cache
+# ──────────────── OS Files ────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+.AppleDouble
+.LSOverride
+.directory
+
+# ──────────────── Runtime & Logs ────────────────
+*.log
+logs/
+.pm2/
+
+# ──────────────── Testing ────────────────
+.nyc_output/
+.jest/
+.coverage/
+
+# ──────────────── Misc ────────────────
 .cache/
-.parcel-cache/
+.eslint-cache/
+.stylelintcache
+*.swp
+.idea
+.vscode-settings.json

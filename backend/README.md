@@ -446,7 +446,137 @@ Response: {
 
 ---
 
-## 🗄️ Database Schema
+## � Complete API Endpoints Reference
+
+### 🛒 Products & Categories
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/products` | List all products with filters | Public |
+| GET | `/api/products/{slug}` | Get single product by slug | Public |
+| GET | `/api/products/featured` | Get featured products | Public |
+| GET | `/api/products/top-selling` | Get top-selling products | Public |
+| GET | `/api/products/recently-added` | Get recently added products | Public |
+| GET | `/api/products/top-rated` | Get top-rated products | Public |
+| GET | `/api/categories` | List all product categories | Public |
+
+**Query Parameters for `/api/products`:**
+- `category`: Filter by category name
+- `min_price`: Minimum price filter
+- `max_price`: Maximum price filter
+- `sort_by`: Sort option (`price_asc`, `price_desc`, `rating`, `newest`)
+
+### 🔐 Authentication
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| POST | `/api/auth/register` | User registration | Public |
+| POST | `/api/auth/login` | User login | Public |
+
+### 👤 User Profile & Addresses
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/users/me` | Get current user profile | JWT |
+| PUT | `/api/users/me` | Update user profile | JWT |
+| GET | `/api/users/addresses` | Get all user addresses | JWT |
+| POST | `/api/users/addresses` | Create new address | JWT |
+| PUT | `/api/users/addresses/{id}` | Update address | JWT |
+| DELETE | `/api/users/addresses/{id}` | Delete address | JWT |
+| GET | `/api/users/payment-methods` | Get payment methods | JWT |
+| POST | `/api/users/payment-methods` | Add payment method | JWT |
+
+### 🛒 Shopping Cart
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/cart` | Get all cart items | JWT |
+| POST | `/api/cart` | Add product to cart | JWT |
+| PUT | `/api/cart/{id}` | Update cart item quantity | JWT |
+| DELETE | `/api/cart/{id}` | Remove item from cart | JWT |
+
+### 💖 Wishlist
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/wishlist` | Get wishlist items | JWT |
+| POST | `/api/wishlist` | Add product to wishlist | JWT |
+| DELETE | `/api/wishlist/{id}` | Remove from wishlist | JWT |
+
+### 📦 Orders
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/orders` | Get user's orders | JWT |
+| GET | `/api/orders/{id}` | Get order details | JWT |
+| POST | `/api/orders` | Place new order | JWT |
+
+### 📝 Blog Posts
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/blog/posts` | Get all blog posts | Public |
+| GET | `/api/blog/posts/{id}` | Get single blog post | Public |
+| GET | `/api/blog/posts/featured` | Get featured blog post | Public |
+
+### 💬 Contact & Support
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| POST | `/api/contact` | Submit contact form | Public |
+| GET | `/api/search` | Search products | Public |
+
+### 👨‍💼 Admin Dashboard
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| POST | `/api/admin/auth/login` | Admin login | Public |
+| GET | `/api/admin/dashboard/stats` | Get dashboard statistics | Admin |
+| GET | `/api/admin/dashboard/revenue` | Get monthly revenue data | Admin |
+| GET | `/api/admin/dashboard/order-status` | Get order status breakdown | Admin |
+| GET | `/api/admin/dashboard/recent-orders` | Get recent orders | Admin |
+| GET | `/api/admin/dashboard/low-stock` | Get low stock alerts | Admin |
+| GET | `/api/admin/dashboard/top-products` | Get top products | Admin |
+
+### 📦 Admin Product Management
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/admin/products` | List products (paginated) | Admin |
+| POST | `/api/admin/products` | Create new product | Admin |
+| PUT | `/api/admin/products/{id}` | Update product | Admin |
+| DELETE | `/api/admin/products/{id}` | Delete product | Admin |
+| GET | `/api/admin/categories` | List categories | Admin |
+
+### 📋 Admin Order Management
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/admin/orders` | List all orders (paginated, filterable) | Admin |
+| PUT | `/api/admin/orders/{id}` | Update order status | Admin |
+
+### 👥 Admin Customer Management
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/admin/users` | List all customers | Admin |
+| GET | `/api/admin/users/{id}` | Get customer details | Admin |
+
+### 📊 Admin Analytics
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/admin/analytics` | Get analytics overview | Admin |
+
+### ⚙️ Admin Settings
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/admin/profile` | Get admin profile | Admin |
+| PUT | `/api/admin/profile` | Update admin profile | Admin |
+| POST | `/api/admin/password` | Change password | Admin |
+
+
 
 ### Models
 

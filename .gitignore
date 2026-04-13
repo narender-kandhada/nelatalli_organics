@@ -1,53 +1,190 @@
-# ──────────────── OS & Editor ────────────────
+# ═══════════════════════════════════════════════════════════════════
+#               Nelatalli Organics — Global .gitignore
+# ═══════════════════════════════════════════════════════════════════
+
+# ──────────────── Operating System & OS Files ────────────────
 .DS_Store
 Thumbs.db
-*.swp
-*.swo
-*~
+Desktop.ini
+.AppleDouble
+.LSOverride
+*.cab
+*.msi
+*.msix
+*.msapp
+*.lnk
+
+# ──────────────── IDEs & Editors ────────────────
 .vscode/
 .idea/
 *.sublime-project
 *.sublime-workspace
-.doc/
+*.swp
+*.swo
+*~
+.vim/
+.emacs.d/
+*.iml
+*.iws
+*.ipr
+.project
+.pydevproject
+.settings/
+.classpath
+.launch
+.c9/
+*.launch
+*.sublime-workspace
+jetbrains.jb/
 
-# ──────────────── Environment ────────────────
+# ──────────────── Environment & Configuration ────────────────
 .env
 .env.local
 .env.*.local
+.env.production.local
+.env.development.local
+.env.test.local
 !.env.example
+!.env.sample
+.env.secret
+.secrets/
 
-# ──────────────── Frontend ───────────────────
+# ──────────────── Node.js & Frontend ────────────────
 node_modules/
+npm-debug.log*
+npm-error.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+pnpm-lock.yaml
+package-lock.json
+
 frontend/node_modules/
+frontend-admin/node_modules/
+frontend-user/node_modules/
+
 frontend/dist/
 frontend/build/
 frontend/coverage/
 frontend/.cache/
-frontend/*.log
 dist/
 build/
+coverage/
 
-# ──────────────── Backend ────────────────────
+frontend-admin/dist/
+frontend-admin/build/
+frontend-user/dist/
+frontend-user/build/
+
+# ──────────────── Python & Backend ────────────────
+# Virtual Environments
+venv/
+env/
+ENV/
+.venv/
+.env.venv
+env.bak/
+venv.bak/
 backend/venv/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
 backend/__pycache__/
 backend/routers/__pycache__/
+
+# Distribution / Packaging
+backend/build/
+backend/develop-eggs/
+backend/dist/
+backend/downloads/
+backend/eggs/
+.eggs/
+backend/lib/
+backend/lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+PIPFILE.lock
+
+# Databases & Data Files
 backend/*.db
+backend/*.sqlite
 backend/*.sqlite3
 backend/nelatalli.db
-*.pyc
-*.pyo
-__pycache__/
-venv/
+*.db
+*.sqlite
+*.sqlite3
+.dbm
+
+# Testing
+backend/.pytest_cache/
+backend/htmlcov/
+backend/.coverage
+backend/.coverage.*
+backend/.hypothesis/
+*.cover
 .pytest_cache/
+.tox/
+.nox/
+
+# Type Checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Celery & Async
+backend/celerybeat-schedule
+backend/celerybeat.pid
+
+# ──────────────── Logs ────────────────
+*.log
+logs/
+backend/logs/
+
+# ──────────────── Build & Artifacts ────────────────
+.pytest_cache/
+.mypy_cache/
+.tox/
+.hypothesis/
 .coverage
 htmlcov/
+backend/.coverage
+backend/.pytest_cache/
+backend/htmlcov/
 
-# ──────────────── Logs & Misc ────────────────
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pids
+# ──────────────── Dependencies Downloads ────────────────
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+
+# ──────────────── OS Lock Files ────────────────
+*.lock
+Pipfile.lock
+poetry.lock
+
+# ──────────────── Misc Files ────────────────
+.DS_Store
+Thumbs.db
+.doc/
+*.swp
+*.swo
+*~
+.directory
+.AppleDouble
+.LSOverride
+._*
 *.pid
 *.seed
 *.pid.lock

@@ -57,33 +57,54 @@ nelatalli-organics/
 
 ### 🛍️ Customer Portal (Frontend)
 - **Product Catalog** — 20+ organic products across 4 categories with advanced filtering, sorting & search
-- **Product Details** — Rich product pages with descriptions, ratings, reviews & social sharing
-- **Shopping Cart** — Full cart management with quantity controls & persistent storage
-- **Wishlist** — Save favorite products for later viewing
+- **Product Details** — Rich product pages with descriptions, ratings, reviews, images & specifications
+- **Shopping Cart** — Full cart management with quantity controls, price calculations & persistent storage
+- **Wishlist** — Save favorite products for later viewing and quick access
 - **User Authentication** — Secure JWT-based register & login with email validation
-- **User Profile** — Dashboard with order history, profile settings, and store credits tracking
-- **Address Management** — Multiple shipping addresses with edit/delete capabilities
-- **Checkout Flow** — Multi-step checkout with address creation/selection & order placement
-- **Order Tracking** — View order history and status updates
-- **Blog & Resources** — Wellness articles, recipes & health tips
-- **Contact Management** — Direct contact form for inquiries
-- **Responsive Design** — Mobile-first UI with smooth animations
+- **User Profile** — Dashboard with order history, profile settings, wishlist, and account management
+- **Address Management** — Multiple shipping addresses with create/edit/delete capabilities
+- **Checkout Flow** — Multi-step checkout with address selection, order summary & payment preparation
+- **Order Tracking** — View complete order history with status updates (Pending → Confirmed → Shipped → Delivered)
+- **Blog & Resources** — Wellness articles, recipes, health tips & organic living guides
+- **Contact Management** — Direct contact form for inquiries with email support integration
+- **Responsive Design** — Mobile-first UI with smooth animations and optimized performance
+- **Advanced Search** — Full-text search across products with autocomplete suggestions
+- **Product Filtering** — Filter by category, price range, ratings, and stock availability
+- **Featured Collections** — Top-selling, top-rated, recently-added, and featured product sections
 
 ### 👨‍💼 Admin Dashboard (Frontend-Admin)
-- **Dashboard** — Real-time stats (total users, orders, revenue, etc.)
-- **Product Management** — Create, edit, delete products with bulk operations
-- **Order Management** — View, filter & update order statuses
-- **User Management** — View user accounts, manage permissions
-- **Category Management** — Manage product categories
-- **Analytics** — Visual charts and reports (Recharts integration)
+- **Dashboard Overview** — Real-time KPI cards (total revenue, orders, products, users, low stock, pending orders)
+- **Revenue Analytics** — Month-over-month sales trends with interactive area charts
+- **Order Status Distribution** — Visual pie charts showing order status breakdown
+- **Recent Orders** — Quick overview of latest transactions with customer details
+- **Low Stock Alerts** — Real-time inventory notifications for products with low stock levels
+- **Top Products** — Best-selling products ranked by performance metrics
+- **Product Management** — Create, read, update, delete products with full details (SKU, pricing, categories, stock)
+- **Inventory Tracking** — Real-time stock level management and low-stock warnings
+- **Order Management** — View all orders with filtering by status, payment status, and date range
+- **Order Status Updates** — Update order progress through workflow (Pending → Confirmed → Shipped → Delivered)
+- **Customer Management** — View customer profiles, contact information, order history, and lifetime metrics
+- **Customer Search** — Find customers by name, email, phone, or order history
+- **Analytics & Reporting** — Sales performance, order volume trends, customer metrics, category performance
+- **Date Range Analytics** — Analyze specific time periods with customizable date selectors
+- **Admin Profile** — Update admin credentials, security settings, and preferences
+- **Settings & Configuration** — Manage notifications, theme preferences, appearance customization
+- **Support Dashboard** — View and manage customer support tickets
+- **Role-Based Access** — Admin-only protected endpoints with JWT authentication
 
-### 🔌 Backend API (FastAPI)
-- RESTful API endpoints with automatic documentation (Swagger UI)
-- User authentication with JWT & bcrypt password hashing
-- Product, category, order & wishlist management
-- Blog post management
-- Contact form submission handling
-- SQLite database with SQLAlchemy ORM
+### 🔌 Backend API (FastAPI 0.115+)
+- **RESTful Architecture** — Organized API endpoints by domain (products, users, orders, etc.)
+- **Automatic Documentation** — Interactive Swagger UI and ReDoc for API exploration
+- **User Authentication** — JWT token-based authentication with secure token generation
+- **Password Security** — bcrypt password hashing with salt for secure storage
+- **Database ORM** — SQLAlchemy 2.0+ for robust data management
+- **Data Validation** — Pydantic 2.0+ for request/response validation
+- **CORS Support** — Cross-Origin Resource Sharing for frontend communication
+- **Static File Serving** — Product images and media served via `/static/` endpoint
+- **Error Handling** — Comprehensive error responses with meaningful status codes
+- **Admin Authentication** — Separate admin login with elevated permissions
+
+
 
 
 ## 🚀 Quick Start Guide
@@ -164,7 +185,11 @@ npm install
 npm run dev
 ```
 
-The admin dashboard will be available at **http://localhost:5173** (or next available port)
+The admin dashboard will be available at **http://localhost:3001** or next available port
+
+**Admin Login Credentials:**
+- Email: `admin@organics.com`
+- Password: `admin123`
 
 ---
 
@@ -214,11 +239,13 @@ Each subdirectory has its own comprehensive README:
 ### Admin Dashboard
 | Technology | Purpose |
 |-----------|---------|
-| **React 19** | UI library |
-| **Recharts** | Data visualization |
-| **React Hot Toast** | Notifications |
-| **Lucide React** | Icons |
-| **TailwindCSS** | Styling |
+| **React 19** | UI library & component framework |
+| **Vite 6** | Fast build tool & dev server |
+| **TypeScript** | Static type checking |
+| **TailwindCSS 4** | Utility-first CSS framework |
+| **Recharts** | Data visualization & analytics charts |
+| **Lucide React** | Icon library |
+| **Framer Motion** | Smooth animations & transitions |
 
 ---
 
@@ -439,10 +466,18 @@ For issues, questions, or feedback:
 | Blog | `GET /api/blog/posts`, `/api/blog/posts/{id}`, `/api/blog/posts/featured` | Public |
 | Contact | `POST /api/contact` | Public |
 | Auth | `POST /api/auth/register`, `/api/auth/login` | Public |
-| Profile | `GET/PUT /api/users/me` | JWT |
+| Profile | `GET/PUT /api/users/me`, Addresses, Payment Methods | JWT |
 | Orders | `GET /api/orders`, `GET /api/orders/{id}`, `POST /api/orders` | JWT |
 | Wishlist | `GET/POST /api/wishlist`, `DELETE /api/wishlist/{id}` | JWT |
-| Cart | `GET/POST /api/cart`, `PUT/DELETE /api/cart/{id}` | JWT |
+| Cart | `GET /api/cart`, `POST /api/cart`, `PUT/DELETE /api/cart/{id}` | JWT |
+| Admin Auth | `POST /api/admin/auth/login` | Admin Only |
+| Admin Dashboard | `GET /api/admin/dashboard/stats`, `/revenue`, `/order-status`, `/recent-orders`, `/low-stock`, `/top-products` | Admin Only |
+| Admin Products | `GET/POST /api/admin/products`, `PUT/DELETE /api/admin/products/{id}` | Admin Only |
+| Admin Orders | `GET/PUT /api/admin/orders`, `GET /api/admin/orders/{id}` | Admin Only |
+| Admin Users | `GET /api/admin/users`, `GET /api/admin/users/{id}` | Admin Only |
+| Admin Analytics | `GET /api/admin/analytics`, `/refunds`, `/category-sales` | Admin Only |
+| Admin Settings | `GET/PUT /api/admin/profile`, `/password`, `/preferences` | Admin Only |
+| Admin Support | `GET/POST /api/admin/support`, `PUT /api/admin/support/{id}` | Admin Only |
 
 ## 🛠️ Tech Stack
 
