@@ -1,0 +1,67 @@
+# Render.com Deployment Configuration
+# Nelatalli Organics Backend API
+
+services:
+  - type: web
+    name: nelatalli-organics-api
+    runtime: python
+    pythonVersion: 3.11
+    
+    # Build command - install dependencies from backend directory
+    buildCommand: cd backend && pip install -r requirements.txt
+    
+    # Start command - run uvicorn from backend directory
+    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port 8000
+    
+    # Environment variables
+    envVars:
+      # Database Configuration
+      - key: DATABASE_URL
+        value: sqlite:///./nelatalli.db
+      
+      # Security - Generate a secure key in production
+      - key: SECRET_KEY
+        value: your-super-secret-key-change-in-production
+      
+      # API Configuration
+      - key: API_HOST
+        value: 0.0.0.0
+      - key: API_PORT
+        value: 8000
+      - key: API_RELOAD
+        value: false
+      
+      # CORS - Update with your actual frontend URLs
+      - key: ALLOWED_ORIGINS
+        value: https://nelatalli-frontend.onrender.com,https://nelatalli-admin.onrender.com,http://localhost:3000,http://127.0.0.1:3000
+      
+      # Optional: Email Configuration
+      - key: SMTP_SERVER
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: 587
+      
+      # Optional: Payment Gateway
+      - key: RAZORPAY_KEY_ID
+        value: your-razorpay-key-id
+      - key: RAZORPAY_KEY_SECRET
+        value: your-razorpay-key-secret
+      
+      # JWT Configuration
+      - key: JWT_ALGORITHM
+        value: HS256
+      - key: JWT_EXPIRATION_HOURS
+        value: 24
+      
+      # Logging
+      - key: LOG_LEVEL
+        value: INFO
+    
+    # Health check endpoint
+    healthCheckPath: /health
+    
+    # Autoscaling (optional - free tier doesn't auto-scale)
+    # autoScaling:
+    #   minInstances: 1
+    #   maxInstances: 3
+
