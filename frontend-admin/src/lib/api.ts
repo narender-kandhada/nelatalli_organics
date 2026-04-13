@@ -3,7 +3,9 @@
  * Handles all communication with the FastAPI backend.
  */
 
-const API_BASE = '/api/admin';
+// Get API base URL from environment variable (set in vite.config.ts)
+// Default to /api/admin for local development via proxy
+const API_BASE = import.meta.env.VITE_API_BASE || '/api/admin';
 
 // ─────────────────── Token Management ───────────────────
 
